@@ -24,6 +24,8 @@ interface SkillMatrixProps {
         skill_name: string
         skill_level: number
         skill_icon: string
+        skill_description?: string
+        skill_effect?: string
     }[]
     skillIconMap?: Record<string, string>
 }
@@ -313,22 +315,39 @@ const SkillMatrix: React.FC<SkillMatrixProps> = ({ vMatrix, hexaMatrix, links, s
             {activeTab === 'link' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem' }}>
                     {links && links.length > 0 ? links.map((link, idx) => (
-                        <div key={idx} style={{ 
-                            background: 'rgba(255, 255, 255, 0.05)', 
-                            border: '1px solid rgba(255, 255, 255, 0.1)', 
-                            borderRadius: '0.5rem', 
-                            padding: '0.75rem', 
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.75rem'
-                        }}>
-                            <img src={link.skill_icon} alt={link.skill_name} style={{ width: '32px', height: '32px', borderRadius: '4px' }} />
+                        <div key={idx} 
+                            className="stat-card"
+                            style={{ 
+                                background: 'rgba(255, 255, 255, 0.05)', 
+                                border: '1px solid rgba(255, 255, 255, 0.1)', 
+                                borderRadius: '0.75rem', 
+                                padding: '0.75rem', 
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                cursor: 'help'
+                            }}
+                            title={`${link.skill_name}\n${link.skill_description || ''}\n\n${link.skill_effect || ''}`}
+                        >
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                background: 'rgba(0,0,0,0.2)',
+                                borderRadius: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                overflow: 'hidden',
+                                border: '1px solid rgba(255,255,255,0.1)'
+                            }}>
+                                <img src={link.skill_icon} alt={link.skill_name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                            </div>
                             <div>
-                                <div style={{ fontSize: '0.9rem', fontWeight: '600' }}>{link.skill_name}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--accent-gold)' }}>Lv.{link.skill_level}</div>
+                                <div style={{ fontSize: '0.9rem', fontWeight: '600', color: '#fff' }}>{link.skill_name}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--accent-gold)', fontWeight: '700' }}>Lv.{link.skill_level}</div>
                             </div>
                         </div>
-                    )) : <div style={{ color: 'var(--text-secondary)' }}>無傳授技能資料</div>}
+                    )) : <div style={{ color: 'var(--text-secondary)', padding: '2rem' }}>無傳授技能資料</div>}
                 </div>
             )}
         </div>

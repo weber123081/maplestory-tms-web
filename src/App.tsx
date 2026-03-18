@@ -14,6 +14,7 @@ import {
     getItemEquipment,
     getSymbolEquipment,
     getLinkSkill,
+    LinkSkill,
     getInnerAbility,
     getCashItemEquipment,
     getHyperStat,
@@ -31,12 +32,12 @@ function App() {
     const [loading, setLoading] = useState(false)
     const [loadingCountdown, setLoadingCountdown] = useState(0)
     const [error, setError] = useState<string | null>(null)
-
+ 
     const handleSearch = async (name: string) => {
         setLoading(true)
         setError(null)
         setCharacterData(null)
-        setLoadingCountdown(12) // Start 12s countdown
+        setLoadingCountdown(12); // Start 12s countdown
 
         const countdownInterval = setInterval(() => {
             setLoadingCountdown(prev => (prev > 0 ? prev - 1 : 0));
@@ -99,19 +100,24 @@ function App() {
             const basic = getValue(results[0])
             if (!basic) throw new Error('無法取得角色基本資料');
 
-            const linkData = getValue(results[4]);
+            const linkData = getValue(results[4]) as LinkSkill | null;
             let connectedLinks = linkData?.character_link_skill || [];
             
             // Fallback for TMS: If character_link_skill is empty, check presets
             if (connectedLinks.length === 0 && linkData) {
-                connectedLinks = linkData.character_link_skill_preset_1?.length > 0 ? linkData.character_link_skill_preset_1 :
-                                 linkData.character_link_skill_preset_2?.length > 0 ? linkData.character_link_skill_preset_2 :
-                                 linkData.character_link_skill_preset_3?.length > 0 ? linkData.character_link_skill_preset_3 : [];
+                connectedLinks = (linkData.character_link_skill_preset_1?.length ?? 0) > 0 ? linkData.character_link_skill_preset_1! :
+                                 (linkData.character_link_skill_preset_2?.length ?? 0) > 0 ? linkData.character_link_skill_preset_2! :
+                                 (linkData.character_link_skill_preset_3?.length ?? 0) > 0 ? linkData.character_link_skill_preset_3! : [];
             }
 
             const allLinks = [...connectedLinks];
+            
+            // Add owned link skill if it exists and is not already in the list
             if (linkData?.character_owned_link_skill) {
-                allLinks.unshift(linkData.character_owned_link_skill);
+                const owned = linkData.character_owned_link_skill;
+                if (!allLinks.some(l => l.skill_name === owned.skill_name)) {
+                    allLinks.unshift(owned);
+                }
             }
 
             const skillMap: Record<string, string> = {};
@@ -158,35 +164,38 @@ function App() {
 
 
     return (
-        <div className="container animate-fade-in">
-            <header style={{ textAlign: 'center', marginTop: '2rem', marginBottom: '2rem', padding: '0 1rem' }}>
-                <h1>
-                    家樂福收容所 <span style={{ color: 'var(--accent-primary)' }}>TMS</span>
-                </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}>台灣楓之谷 角色資訊查詢</p>
-            </header>
+        <div className={`container ${!characterData ? 'center-layout' : ''}`}>
+            <div className="initial-view">
+                <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
+                    <h1 className="animate-fade-in" style={{ fontSize: 'clamp(2.5rem, 8vw, 4rem)', fontWeight: '900', letterSpacing: '-0.02em', marginBottom: '0.5rem', background: 'linear-gradient(135deg, #fff 0%, #a020f0 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        楓之谷核心數據中心
+                    </h1>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', fontWeight: '500' }}>MapleStory TMS Professional Analytics</div>
+                </header>
 
-            <main style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem', position: 'relative' }}>
-                <SearchBar onSearch={handleSearch} isLoading={loading} />
-
-                {loading && (
-                    <div className="loading-overlay animate-fade-in">
-                        <div className="loader" />
-                        <h2 style={{ fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', marginBottom: '0.5rem', color: '#e0b0ff' }}>同步核心數據中...</h2>
-                        <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
-                            正在為您抓取最新數據與技能圖示，請稍候
-                        </p>
-                        <div style={{ fontSize: 'clamp(2rem, 6vw, 2.5rem)', fontWeight: '800', color: 'var(--accent-primary)', textShadow: '0 0 20px rgba(160, 32, 240, 0.5)' }}>
-                            {loadingCountdown}s
+                <main style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem', position: 'relative', width: '100%' }}>
+                    <SearchBar onSearch={handleSearch} isLoading={loading} />
+ 
+                    {loading && (
+                        <div className="loading-container animate-fade-in">
+                            <div className="loader" />
+                            <h2 style={{ fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', marginBottom: '0.5rem', color: '#e0b0ff' }}>同步核心數據中...</h2>
+                            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+                                正在為您抓取最新數據與技能圖示，請稍候
+                            </p>
+                            <div style={{ fontSize: 'clamp(2rem, 6vw, 2.5rem)', fontWeight: '800', color: 'var(--accent-primary)', textShadow: '0 0 20px rgba(160, 32, 240, 0.5)' }}>
+                                {loadingCountdown}s
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {error && (
-                    <div className="glass" style={{ padding: '1rem 2rem', borderRadius: '1rem', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#fca5a5' }}>
-                        {error}
-                    </div>
-                )}
+                    {error && (
+                        <div style={{ color: '#ff4d4d', background: 'rgba(255, 77, 77, 0.1)', padding: '1rem 2rem', borderRadius: '1rem', border: '1px solid rgba(255, 77, 77, 0.2)', marginTop: '1rem' }}>
+                            {error}
+                        </div>
+                    )}
+                </main>
+            </div>
 
                 {characterData && (
                     <div className="dashboard-grid animate-fade-in">
@@ -209,8 +218,7 @@ function App() {
                         </div>
                     </div>
                 )}
-            </main>
-
+ 
             <footer style={{ marginTop: '5rem', padding: '3rem', textAlign: 'center', color: 'var(--text-secondary)', fontSize: '0.875rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                 &copy; 2026 MapleStory TMS Fan Site. Data provided by Nexon Open API.
             </footer>

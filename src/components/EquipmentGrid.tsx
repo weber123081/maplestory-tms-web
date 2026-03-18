@@ -63,6 +63,11 @@ const slotMappingList: Record<string, { row: number; col: number; subIndex?: num
     '琉': [ {row: 4, col: 2, subIndex: 0} ], 
     '徽章': [ {row: 4, col: 2, subIndex: 2} ], 
     '勳章': [ {row: 3, col: 4} ],  
+    '輔助武器': [ {row: 4, col: 2, subIndex: 1} ],
+    '副武器': [ {row: 4, col: 2, subIndex: 1} ],
+    '小太刀': [ {row: 4, col: 2, subIndex: 1} ], // Hayato Sub-weapon
+    '劍鞘': [ {row: 4, col: 2, subIndex: 1} ], // Hayato Sub-weapon fallback
+    '(Unknown)': [ {row: 4, col: 2, subIndex: 1} ], // Often subweapon in TMS
 
     // Column 4
     '帽子': [ {row: 0, col: 3} ],
@@ -137,12 +142,26 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
     const jewelSlot = { item: null as any };
     const totemSlots = [null, null, null] as any[];
 
+    // Totem fallbacks (placeholders if API icon fails)
+    const totemFallbacks = [
+        '/brain/2330ce31-574a-4546-91ce-ed6970073c30/totem_yu_garden_horse_1773834241755.png',
+        '/brain/2330ce31-574a-4546-91ce-ed6970073c30/totem_yu_garden_kettle_1773834259469.png',
+        '/brain/2330ce31-574a-4546-91ce-ed6970073c30/totem_yu_garden_incense_1773834280590.png'
+    ];
+
     // Helper to place item
     const placeItem = (itemObj: any, partName: string, slotName?: string) => {
-        // Special routing for Jewel and Totems (TMS specific part names)
-        const isJewel = partName.includes('聖血') || partName.includes('寶石') || partName.includes('Jewel');
-        const isTotem = partName.includes('圖騰') || itemObj.item_name.includes('圖騰') || 
-                        ['馴服的怪物', '馬鞍'].includes(partName) || (slotName || '').includes('圖騰');
+        const itemName = itemObj.item_name || itemObj.cash_item_name || '';
+        const combined = (partName + (slotName || '') + itemName).toLowerCase();
+
+        // Special routing for Totems (TMS specific part names/item keywords)
+        const isTotem = combined.includes('圖騰') || 
+                        ['馴服的怪物', '馬鞍', '戰功'].includes(partName) || 
+                        combined.includes('香爐') || 
+                        combined.includes('茶壺') || combined.includes('戰功');
+
+        // Special routing for Jewel (TMS job specific)
+        const isJewel = combined.includes('聖血') || combined.includes('寶石') || combined.includes('jewel') || combined.includes('寶玉');
 
         if (isJewel) {
             jewelSlot.item = itemObj;
@@ -355,7 +374,15 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                                     onMouseMove={(e) => handleMouseMove(e, item)}
                                     onMouseLeave={handleMouseLeave}
                                 >
-                                    {item ? <img src={item.item_icon} alt={item.item_name} /> : <span style={{ fontSize: '0.45rem', opacity: 0.2 }}>TOTEM</span>}
+                                    {item ? (
+                                        <img 
+                                            src={item.item_icon || totemFallbacks[idx]} 
+                                            alt={item.item_name} 
+                                            onError={(e) => { (e.target as HTMLImageElement).src = totemFallbacks[idx]; }}
+                                        />
+                                    ) : (
+                                        <span style={{ fontSize: '0.45rem', opacity: 0.2 }}>TOTEM</span>
+                                    )}
                                 </div>
                             ))}
                         </div>

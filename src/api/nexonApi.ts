@@ -1,7 +1,7 @@
 const BASE_URL = import.meta.env.PROD 
     ? 'https://open.api.nexon.com/maplestorytw/v1'
     : '/api/nexon/maplestorytw/v1'
-const API_KEY = import.meta.env.VITE_NEXON_API_KEY
+const API_KEY = 'test_94334a116470fe8849985369bd03c74e1c0803ad711b740a59b29d95c4953f7aefe8d04e6d233bd35cf2fabdeb93fb0d';
 
 export interface CharacterBasic {
     character_name: string
@@ -48,26 +48,58 @@ export interface LinkSkill {
         skill_name: string
         skill_level: number
         skill_icon: string
+        skill_description?: string
+        skill_effect?: string
+        skill_effect_next?: string | null
     }[]
     character_link_skill_preset_1?: {
         skill_name: string
         skill_level: number
         skill_icon: string
+        skill_description?: string
+        skill_effect?: string
     }[]
     character_link_skill_preset_2?: {
         skill_name: string
         skill_level: number
         skill_icon: string
+        skill_description?: string
+        skill_effect?: string
     }[]
     character_link_skill_preset_3?: {
         skill_name: string
         skill_level: number
         skill_icon: string
+        skill_description?: string
+        skill_effect?: string
     }[]
     character_owned_link_skill?: {
         skill_name: string
         skill_level: number
         skill_icon: string
+        skill_description?: string
+        skill_effect?: string
+    }
+    character_owned_link_skill_preset_1?: {
+        skill_name: string
+        skill_level: number
+        skill_icon: string
+        skill_description?: string
+        skill_effect?: string
+    }
+    character_owned_link_skill_preset_2?: {
+        skill_name: string
+        skill_level: number
+        skill_icon: string
+        skill_description?: string
+        skill_effect?: string
+    }
+    character_owned_link_skill_preset_3?: {
+        skill_name: string
+        skill_level: number
+        skill_icon: string
+        skill_description?: string
+        skill_effect?: string
     }
 }
 
