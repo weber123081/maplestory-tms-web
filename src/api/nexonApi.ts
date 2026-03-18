@@ -1,5 +1,7 @@
-const BASE_URL = '/api/nexon/maplestorytw/v1'
-const API_KEY = import.meta.env.VITE_API_KEY
+const BASE_URL = import.meta.env.PROD 
+    ? 'https://open.api.nexon.com/maplestorytw/v1'
+    : '/api/nexon/maplestorytw/v1'
+const API_KEY = import.meta.env.VITE_NEXON_API_KEY
 
 export interface CharacterBasic {
     character_name: string
