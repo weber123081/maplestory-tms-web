@@ -14,7 +14,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({ stats }) => {
     const mainStats = [
         { name: '綜合戰力', value: getStat('戰鬥力'), highlight: true },
         { name: '最終傷害', value: getStat('最終傷害') + '%' },
-        { name: 'BOSS 傷害', value: getStat('BOSS 傷害') + '%' },
+        { name: 'BOSS 傷害', value: getStat('BOSS怪物傷害') + '%' },
         { name: '無視防禦率', value: getStat('無視防禦率') + '%' },
         { name: '傷害', value: getStat('傷害') + '%' },
         { name: '爆擊傷害', value: getStat('爆擊傷害') + '%' },
@@ -30,12 +30,12 @@ const StatsSection: React.FC<StatsSectionProps> = ({ stats }) => {
     ]
 
     return (
-        <div className="stats-container animate-fade-in" style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div className="stats-container animate-fade-in">
             <div className="glass" style={{ padding: '2rem', borderRadius: '1.5rem' }}>
                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ color: 'var(--accent-primary)' }}>✦</span> 焦點屬性
                 </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+                <div className="stats-grid">
                     {mainStats.map(stat => (
                         <div key={stat.name} className="stat-card" style={{
                             padding: '1rem',
@@ -60,7 +60,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({ stats }) => {
                 <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ color: 'var(--accent-primary)' }}>✦</span> 詳細屬性
                 </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem' }}>
+                <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))' }}>
                     {detailedStats.map(stat => (
                         <div key={stat.name} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
                             <span style={{ color: 'var(--text-secondary)' }}>{stat.name}</span>

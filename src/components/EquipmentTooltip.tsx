@@ -5,6 +5,7 @@ interface EquipmentTooltipProps {
     item: any;
     x: number;
     y: number;
+    transform: string;
 }
 
 const getGradeColor = (grade: string | null | undefined) => {
@@ -30,34 +31,40 @@ const StatLine = ({ label, total, base, add, scroll, star, ex }: { label: string
     }
 
     return (
-        <div className="tooltip-stat complex">
-            <span>{label}</span> 
-            <div className="tooltip-stat-breakdown">
+        <div className="tooltip-stat">
+            <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                <span>{label}</span>
                 <span className="tooltip-stat-total">+{total}</span>
-                <span className="tooltip-stat-details">
-                    ({base || 0} 
-                    {hasAdd ? <span className="stat-add"> +{add}</span> : ''}
-                    {hasScroll ? <span className="stat-scroll"> +{scroll}</span> : ''}
-                    {hasStar ? <span className="stat-scroll" style={{ color: '#ffcc00' }}> +{star}</span> : ''}
-                    {hasEx ? <span className="stat-scroll" style={{ color: '#ff6666' }}> +{ex}</span> : ''})
-                </span>
+            </div>
+            <div className="tooltip-stat-details" style={{ fontSize: '0.65rem', textAlign: 'right', marginTop: '-2px' }}>
+                ({base || 0} 
+                {hasAdd ? <span className="stat-add">+{add}</span> : ''}
+                {hasScroll ? <span className="stat-scroll">+{scroll}</span> : ''}
+                {hasStar ? <span className="stat-scroll" style={{ color: '#ffcc00' }}>+{star}</span> : ''}
+                {hasEx ? <span className="stat-scroll" style={{ color: '#ff6666' }}>+{ex}</span> : ''})
             </div>
         </div>
     );
 };
 
-const EquipmentTooltip: React.FC<EquipmentTooltipProps> = ({ item, x, y }) => {
+const EquipmentTooltip: React.FC<EquipmentTooltipProps> = ({ item, x, y, transform }) => {
     if (!item) return null;
 
     const gradeColor = getGradeColor(item.potential_option_grade);
     const borderColor = item.potential_option_grade ? gradeColor : 'rgba(255,255,255,0.2)';
-
+    
+    // Simplified positioning: 
+    // We already have 'transform' from EquipmentGrid which handles the quadrant flipping.
+    // However, top: y and bottom: ... might be fighting each other or causing issues.
+    // Let's stick to top/left but ensure they are within a safe margin.
+    
     return createPortal(
         <div 
             className="equipment-tooltip" 
             style={{ 
                 left: x, 
                 top: y,
+                transform: transform,
                 borderColor: borderColor 
             }}
         >

@@ -93,30 +93,39 @@ const slotMappingList: Record<string, { row: number; col: number; subIndex?: num
 
 const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment, characterImage }) => {
     const [viewMode, setViewMode] = useState<'normal' | 'cash'>('normal')
-    const [tooltipData, setTooltipData] = useState<{ item: any; x: number; y: number } | null>(null);
+    const [tooltipData, setTooltipData] = useState<{ item: any; x: number; y: number; transform: string } | null>(null);
 
     const handleMouseMove = (e: React.MouseEvent, item: any) => {
         if (!item) return;
         
-        const tooltipWidth = 280; // approximate width from CSS
-        const tooltipHeight = 400; // rough max height estimation
+        const tooltipWidth = Math.min(260, window.innerWidth * 0.9);
+        const tooltipHeaderHeight = 200; // Estimated
         
-        // Display just to the right of the cursor
-        let targetX = e.clientX + 15;
-        let targetY = e.clientY + 15;
+        // Determine quadrant
+        const isRightHalf = e.clientX > window.innerWidth / 2;
+        const isBottomHalf = e.clientY > window.innerHeight / 2;
 
-        // Bounding checks
-        if (targetX + tooltipWidth > window.innerWidth) {
-            targetX = e.clientX - tooltipWidth - 15;
-        }
-        if (targetY + tooltipHeight > window.innerHeight) {
-            targetY = Math.max(10, window.innerHeight - tooltipHeight - 10);
+        const offset = 15;
+        let x = e.clientX + offset;
+        let y = e.clientY + offset;
+
+        const translateX = isRightHalf ? '-100%' : '0';
+        const translateY = isBottomHalf ? '-100%' : '0';
+        
+        if (isRightHalf) x = e.clientX - offset;
+        if (isBottomHalf) y = e.clientY - offset;
+
+        // Final safety bounds
+        if (x < 10) x = 10;
+        if (x + (isRightHalf ? 0 : tooltipWidth) > window.innerWidth - 10) {
+            x = window.innerWidth - tooltipWidth - 10;
         }
 
         setTooltipData({
             item,
-            x: targetX,
-            y: targetY
+            x,
+            y,
+            transform: `translate(${translateX}, ${translateY})`
         });
     };
 
@@ -178,7 +187,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
     }
 
     return (
-        <div className="glass" style={{ padding: '2rem', borderRadius: '1.5rem', width: '100%', maxWidth: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="glass grid-content-card" style={{ alignItems: 'center' }}>
             <div className="equipment-window">
                 <div className="equipment-tabs">
                     <button 
@@ -314,7 +323,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                 * 游標懸停在裝備上可查看詳細潛能屬性與星力
             </p>
 
-            {tooltipData && <EquipmentTooltip item={tooltipData.item} x={tooltipData.x} y={tooltipData.y} />}
+            {tooltipData && <EquipmentTooltip item={tooltipData.item} x={tooltipData.x} y={tooltipData.y} transform={tooltipData.transform} />}
         </div>
     )
 }

@@ -42,7 +42,7 @@ const AdvancedStats: React.FC<AdvancedStatsProps> = ({ ability, hyperStat, setEf
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%' }}>
             {/* Inner Ability */}
-            <div className="glass" style={{ padding: '1.5rem', borderRadius: '1rem' }}>
+            <div className="glass grid-content-card" style={{ padding: '1.5rem' }}>
                 <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ color: 'var(--accent-primary)' }}>✦</span> 內在潛能
                 </h3>
@@ -62,7 +62,7 @@ const AdvancedStats: React.FC<AdvancedStatsProps> = ({ ability, hyperStat, setEf
             </div>
 
             {/* Hyper Stats */}
-            <div className="glass" style={{ padding: '1.5rem', borderRadius: '1rem' }}>
+            <div className="glass grid-content-card" style={{ padding: '1.5rem' }}>
                 <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ color: 'var(--accent-primary)' }}>✦</span> 極限屬性 (Hyper Stats)
                 </h3>
@@ -83,7 +83,7 @@ const AdvancedStats: React.FC<AdvancedStatsProps> = ({ ability, hyperStat, setEf
             </div>
 
             {/* Set Effects */}
-            <div className="glass" style={{ padding: '1.5rem', borderRadius: '1rem' }}>
+            <div className="glass grid-content-card" style={{ padding: '1.5rem' }}>
                 <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ color: 'var(--accent-primary)' }}>✦</span> 套裝效果
                 </h3>

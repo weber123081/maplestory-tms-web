@@ -5,6 +5,7 @@ export interface CharacterBasic {
     character_name: string
     character_level: number
     character_job: string
+    character_class?: string // Added for TMS API compatibility
     world_name: string
     character_image: string
 }
@@ -41,11 +42,31 @@ export interface SymbolEquipment {
 }
 
 export interface LinkSkill {
-    link_skill: {
+    character_link_skill: {
         skill_name: string
         skill_level: number
         skill_icon: string
     }[]
+    character_link_skill_preset_1?: {
+        skill_name: string
+        skill_level: number
+        skill_icon: string
+    }[]
+    character_link_skill_preset_2?: {
+        skill_name: string
+        skill_level: number
+        skill_icon: string
+    }[]
+    character_link_skill_preset_3?: {
+        skill_name: string
+        skill_level: number
+        skill_icon: string
+    }[]
+    character_owned_link_skill?: {
+        skill_name: string
+        skill_level: number
+        skill_icon: string
+    }
 }
 
 const fetchWithRetry = async (url: string, options: any, retries = 3): Promise<Response> => {
@@ -174,6 +195,14 @@ export const getHexaMatrix = async (ocid: string): Promise<any> => {
         headers: { 'x-nxopen-api-key': API_KEY }
     })
     if (!response.ok) throw new Error('取得HEXA矩陣失敗')
+    return response.json()
+}
+
+export const getCharacterSkill = async (ocid: string, grade: string): Promise<any> => {
+    const response = await fetchWithRetry(`${BASE_URL}/character/skill?ocid=${ocid}&character_skill_grade=${grade}`, {
+        headers: { 'x-nxopen-api-key': API_KEY }
+    })
+    if (!response.ok) throw new Error(`取得第 ${grade} 轉技能失敗`)
     return response.json()
 }
 

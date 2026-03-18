@@ -11,7 +11,7 @@ interface SymbolSectionProps {
 
 const SymbolSection: React.FC<SymbolSectionProps> = ({ symbols }) => {
     return (
-        <div className="glass" style={{ padding: '2rem', borderRadius: '1.5rem', width: '100%', maxWidth: '800px' }}>
+        <div className="glass grid-content-card">
             <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={{ color: 'var(--accent-primary)' }}>✦</span> 符文 & 力量
             </h3>
@@ -28,7 +28,7 @@ const SymbolSection: React.FC<SymbolSectionProps> = ({ symbols }) => {
                     }}>
                         <img src={symbol.symbol_icon} alt={symbol.symbol_name} style={{ width: '40px', height: '40px' }} />
                         <div>
-                            <div style={{ fontSize: '0.875rem', fontWeight: '500' }}>{symbol.symbol_name.replace('秘法符文：', '').replace('真實符文：', '')}</div>
+                            <div style={{ fontSize: '0.875rem', fontWeight: '500' }}>{symbol.symbol_name.replace('祕法符文：', '').replace('真實符文：', '')}</div>
                             <div style={{ fontSize: '0.75rem', color: 'var(--accent-primary)' }}>Lv.{symbol.symbol_level} | {symbol.symbol_force}</div>
                         </div>
                     </div>

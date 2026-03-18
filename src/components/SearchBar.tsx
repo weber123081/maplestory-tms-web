@@ -19,17 +19,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, isLoading }) => {
     return (
         <form
             onSubmit={handleSubmit}
-            className="glass"
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '0.5rem',
-                borderRadius: '1.5rem',
-                width: '100%',
-                maxWidth: '600px',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)'
-            }}
+            className="glass search-form-container"
         >
             <input
                 type="text"

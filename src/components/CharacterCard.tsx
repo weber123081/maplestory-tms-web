@@ -16,32 +16,8 @@ interface CharacterCardProps {
 
 const CharacterCard: React.FC<CharacterCardProps> = ({ data }) => {
     return (
-        <div
-            className="glass"
-            style={{
-                padding: '2rem',
-                borderRadius: '2rem',
-                width: '100%',
-                maxWidth: '500px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '1.5rem',
-                textAlign: 'center',
-                animation: 'fadeIn 0.5s ease-out'
-            }}
-        >
-            <div style={{
-                width: '150px',
-                height: '150px',
-                background: 'rgba(255, 255, 255, 0.03)',
-                borderRadius: '50%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                overflow: 'hidden',
-                border: '2px solid var(--accent-gold)'
-            }}>
+        <div className="glass character-card">
+            <div className="character-image-wrapper">
                 <img
                     src={data.character_image}
                     alt={data.character_name}
