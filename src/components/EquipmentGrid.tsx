@@ -156,8 +156,9 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
 
         // Special routing for Totems (TMS specific part names/item keywords)
         const isTotem = combined.includes('圖騰') || 
-                        ['馴服的怪物', '馬鞍', '戰功'].includes(partName) || 
-                        combined.includes('香爐') || 
+                        ['馴服的怪物', '馬鞍', '戰功', '怪物裝備'].includes(partName) || 
+                        combined.includes('香爐') || combined.includes('痕跡') ||
+                        combined.includes('碑石') ||
                         combined.includes('茶壺') || combined.includes('戰功');
 
         // Special routing for Jewel (TMS job specific)
