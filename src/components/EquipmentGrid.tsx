@@ -61,12 +61,8 @@ const slotMappingList: Record<string, { row: number; col: number; subIndex?: num
     '雙手劍': [ {row: 4, col: 2, subIndex: 0} ],
     '矛': [ {row: 4, col: 2, subIndex: 0} ],
     '琉': [ {row: 4, col: 2, subIndex: 0} ], 
-    '副武器': [ {row: 4, col: 2, subIndex: 1} ],
-    '輔助武器': [ {row: 4, col: 2, subIndex: 1} ],
-    '璃': [ {row: 4, col: 2, subIndex: 1} ],
-    '盾牌': [ {row: 4, col: 2, subIndex: 1} ],
-    '魔導書': [ {row: 4, col: 2, subIndex: 1} ], 
-    '勳章': [ {row: 4, col: 2, subIndex: 2} ],
+    '徽章': [ {row: 4, col: 2, subIndex: 2} ], 
+    '勳章': [ {row: 3, col: 4} ],  
 
     // Column 4
     '帽子': [ {row: 0, col: 3} ],
@@ -85,7 +81,6 @@ const slotMappingList: Record<string, { row: number; col: number; subIndex?: num
     '披風': [ {row: 0, col: 4} ],
     '手套': [ {row: 1, col: 4} ],
     '鞋子': [ {row: 2, col: 4} ],
-    '徽章': [ {row: 3, col: 4} ],  // Emblem
     '心臟': [ {row: 4, col: 4} ],
     '機器心臟': [ {row: 4, col: 4} ], // Heart explicitly named 
     '胸章': [ {row: 5, col: 4} ],  // Badge
@@ -139,8 +134,23 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
     const grid: any[][] = Array.from({ length: gridRows }, () => Array(gridCols).fill(null));
     grid[4][2] = [null, null, null];
 
+    const jewelSlot = { item: null as any };
+    const totemSlots = [null, null, null] as any[];
+
     // Helper to place item
     const placeItem = (itemObj: any, partName: string, slotName?: string) => {
+        // Special routing for Jewel and Totems
+        if (partName.includes('聖血') || partName.includes('寶石')) {
+            jewelSlot.item = itemObj;
+            return true;
+        }
+        if (partName.includes('圖騰')) {
+            const emptyIdx = totemSlots.findIndex(s => s === null);
+            if (emptyIdx !== -1) {
+                totemSlots[emptyIdx] = itemObj;
+                return true;
+            }
+        }
         // Attempt strict mapping first, try partName then slotName
         let slots = slotMappingList[partName] || (slotName ? slotMappingList[slotName] : undefined);
         
@@ -229,14 +239,14 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                                 if (c === 1) return r <= 4; // Col 1 is 0-4
                                 if (c === 3) return r <= 4; // Col 3 is 0-4
                                 if (c === 4) return true; // Col 4 is 0-5
-                                if (c === 2 && r === 4) return true; // Center weapon/sub/medal 
+                                if (c === 2 && r === 4) return true; // Center weapon/sub/emblem
                                 return false;
                             }
                             if (!isValidSlot(rowIndex, colIndex)) return null;
 
                             // Render Center horizontal slots (Weapon/Sub/Medal)
                             if (colIndex === 2 && rowIndex === 4) {
-                                const subLabels = ['WEAPON', 'SUB WPN', 'MEDAL'];
+                                const subLabels = ['WEAPON', 'SUB WPN', 'EMBLEM'];
                                 return (
                                     <div key={`subgrid-4-2`} style={{ gridRow: 5, gridColumn: 3, display: 'flex', gap: '6px', width: '100%', justifyContent: 'space-between', zIndex: 2 }}>
                                         {(cellItem as any[]).map((subItem, idx) => (
@@ -276,7 +286,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                                 if (c === 1 && r === 4) return 'PENDANT';
                         
                                 if (c === 3 && r === 0) return 'CAP';
-                                if (c === 3 && r === 1) return 'SUIT / TOP';
+                                if (c === 3 && r === 1) return 'CLOTHES';
                                 if (c === 3 && r === 2) return 'PANTS';
                                 if (c === 3 && r === 3) return 'SHOULDER';
                                 if (c === 3 && r === 4) return 'ANDROID';
@@ -284,7 +294,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                                 if (c === 4 && r === 0) return 'CAPE';
                                 if (c === 4 && r === 1) return 'GLOVES';
                                 if (c === 4 && r === 2) return 'SHOES';
-                                if (c === 4 && r === 3) return 'EMBLEM';
+                                if (c === 4 && r === 3) return 'MEDAL';
                                 if (c === 4 && r === 4) return 'HEART';
                                 if (c === 4 && r === 5) return 'BADGE';
                                 
@@ -294,28 +304,58 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                             const label = getSlotLabel(rowIndex, colIndex);
                                         
                             return (
-                            <div 
-                                key={`${rowIndex}-${colIndex}`} 
-                                className="equipment-slot" 
-                                style={{ zIndex: 1, gridRow: rowIndex + 1, gridColumn: colIndex + 1 }} 
-                                onMouseMove={(e) => handleMouseMove(e, cellItem)}
-                                onMouseLeave={handleMouseLeave}
-                            >
-                                {cellItem ? (
-                                    <>
-                                        <img src={cellItem.item_icon} alt={cellItem.item_name} />
-                                        {(cellItem.starforce || cellItem.item_starforce) && (cellItem.starforce !== '0' && cellItem.item_starforce !== '0') && (
-                                            <div className="equipment-starforce">{cellItem.starforce || cellItem.item_starforce}</div>
-                                        )}
-                                    </>
-                                ) : (
-                                    <span style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.25)', fontWeight: 800, textAlign: 'center', lineHeight: 1.1, wordBreak: 'break-word', padding: '0 2px' }}>
-                                        {label}
-                                    </span>
-                                )}
-                            </div>
-                        )})
+                                <div 
+                                    key={`${rowIndex}-${colIndex}`} 
+                                    className="equipment-slot" 
+                                    style={{ zIndex: 1, gridRow: rowIndex + 1, gridColumn: colIndex + 1 }} 
+                                    onMouseMove={(e) => handleMouseMove(e, cellItem)}
+                                    onMouseLeave={handleMouseLeave}
+                                >
+                                    {cellItem ? (
+                                        <>
+                                            <img src={cellItem.item_icon} alt={cellItem.item_name} />
+                                            {(cellItem.starforce || cellItem.item_starforce) && (cellItem.starforce !== '0' && cellItem.item_starforce !== '0') && (
+                                                <div className="equipment-starforce">{cellItem.starforce || cellItem.item_starforce}</div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <span style={{ fontSize: '0.45rem', color: 'rgba(255,255,255,0.25)', fontWeight: 800, textAlign: 'center', lineHeight: 1.1, wordBreak: 'break-word', padding: '0 2px' }}>
+                                            {label}
+                                        </span>
+                                    )}
+                                </div>
+                            );
+                        })
                     )}
+                </div>
+
+                <div className="extra-equipment-container">
+                    <div className="extra-section-box">
+                        <div className="extra-section-title">JEWEL</div>
+                        <div 
+                            className="equipment-slot"
+                            onMouseMove={(e) => handleMouseMove(e, jewelSlot.item)}
+                            onMouseLeave={handleMouseLeave}
+                        >
+                            {jewelSlot.item ? <img src={jewelSlot.item.item_icon} alt={jewelSlot.item.item_name} /> : <span style={{ fontSize: '0.45rem', opacity: 0.2 }}>JEWEL</span>}
+                        </div>
+                    </div>
+
+                    <div className="extra-section-box">
+                        <div className="extra-section-title">TOTEM</div>
+                        <div className="totem-grid">
+                            {totemSlots.map((item, idx) => (
+                                <div 
+                                    key={`totem-${idx}`}
+                                    className="equipment-slot"
+                                    onMouseMove={(e) => handleMouseMove(e, item)}
+                                    onMouseLeave={handleMouseLeave}
+                                >
+                                    {item ? <img src={item.item_icon} alt={item.item_name} /> : <span style={{ fontSize: '0.45rem', opacity: 0.2 }}>TOTEM</span>}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
             
