@@ -139,28 +139,32 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
 
     // Helper to place item
     const placeItem = (itemObj: any, partName: string, slotName?: string) => {
-        // Special routing for Jewel and Totems
-        if (partName.includes('聖血') || partName.includes('寶石')) {
+        // Special routing for Jewel and Totems (TMS specific part names)
+        const isJewel = partName.includes('聖血') || partName.includes('寶石') || partName.includes('Jewel');
+        const isTotem = partName.includes('圖騰') || itemObj.item_name.includes('圖騰') || 
+                        ['馴服的怪物', '馬鞍'].includes(partName) || (slotName || '').includes('圖騰');
+
+        if (isJewel) {
             jewelSlot.item = itemObj;
             return true;
         }
-        if (partName.includes('圖騰')) {
+        if (isTotem) {
             const emptyIdx = totemSlots.findIndex(s => s === null);
             if (emptyIdx !== -1) {
                 totemSlots[emptyIdx] = itemObj;
                 return true;
             }
         }
+
         // Attempt strict mapping first, try partName then slotName
         let slots = slotMappingList[partName] || (slotName ? slotMappingList[slotName] : undefined);
         
-        // Dynamic Fallback: If it's completely unrecognized (like "(Unknown)" or literal weapon names)
+        // Dynamic Fallback: If it's completely unrecognized
         if (!slots) {
-            // Check if it contains known standard strings to prevent mis-routing
             const isStandard = ['戒指', '腰帶', '帽子', '臉飾', '眼飾', '耳環', '上衣', '褲', '裙', '鞋', '手套', '披風', '胸章', '徽章', '心臟', '勳章', '肩膀', '口袋', '墜', '項鍊'].some(k => (partName + (slotName || '')).includes(k));
             if (!isStandard) {
-                // Route to Center slots [Weapon, SubWpn, Medal]
-                slots = [ {row: 4, col: 2, subIndex: 0}, {row: 4, col: 2, subIndex: 1} ];
+                // Route to Center slots [Weapon, SubWpn, Emblem]
+                slots = [ {row: 4, col: 2, subIndex: 0}, {row: 4, col: 2, subIndex: 1}, {row: 4, col: 2, subIndex: 2} ];
             }
         }
 
