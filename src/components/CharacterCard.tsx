@@ -21,6 +21,7 @@ const CharacterCard: React.FC<CharacterCardProps> = ({ data }) => {
                 <img
                     src={data.character_image}
                     alt={data.character_name}
+                    referrerPolicy="no-referrer"
                     style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
             </div>

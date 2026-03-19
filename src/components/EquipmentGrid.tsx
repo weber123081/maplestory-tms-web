@@ -142,11 +142,11 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
     const jewelSlot = { item: null as any };
     const totemSlots = [null, null, null] as any[];
 
-    // Totem fallbacks (placeholders if API icon fails)
+    // Totem fallbacks (generic placeholders if API icon fails)
     const totemFallbacks = [
-        '/brain/2330ce31-574a-4546-91ce-ed6970073c30/totem_yu_garden_horse_1773834241755.png',
-        '/brain/2330ce31-574a-4546-91ce-ed6970073c30/totem_yu_garden_kettle_1773834259469.png',
-        '/brain/2330ce31-574a-4546-91ce-ed6970073c30/totem_yu_garden_incense_1773834280590.png'
+        'https://via.placeholder.com/64?text=T1',
+        'https://via.placeholder.com/64?text=T2',
+        'https://via.placeholder.com/64?text=T3'
     ];
 
     // Helper to place item
@@ -250,7 +250,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                             width: '100%',
                             height: '100%'
                         }}>
-                            <img src={characterImage} alt="Character" style={{ maxWidth: '140px', maxHeight: '100%', objectFit: 'contain' }} />
+                            <img src={characterImage} alt="Character" referrerPolicy="no-referrer" style={{ maxWidth: '140px', maxHeight: '100%', objectFit: 'contain' }} />
                         </div>
                     )}
 
@@ -337,7 +337,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                                 >
                                     {cellItem ? (
                                         <>
-                                            <img src={cellItem.item_icon} alt={cellItem.item_name} />
+                                            <img src={cellItem.item_icon} alt={cellItem.item_name} referrerPolicy="no-referrer" />
                                             {(cellItem.starforce || cellItem.item_starforce) && (cellItem.starforce !== '0' && cellItem.item_starforce !== '0') && (
                                                 <div className="equipment-starforce">{cellItem.starforce || cellItem.item_starforce}</div>
                                             )}
@@ -379,6 +379,7 @@ const EquipmentGrid: React.FC<EquipmentGridProps> = ({ equipment, cashEquipment,
                                         <img 
                                             src={item.item_icon || totemFallbacks[idx]} 
                                             alt={item.item_name} 
+                                            referrerPolicy="no-referrer"
                                             onError={(e) => { (e.target as HTMLImageElement).src = totemFallbacks[idx]; }}
                                         />
                                     ) : (
